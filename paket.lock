@@ -1,0 +1,6 @@
+FRAMEWORK: NET452
+NUGET
+  remote: https://api.nuget.org/v3/index.json
+    FSharp.Core (4.1.12)
+      System.ValueTuple (>= 4.3)
+    System.ValueTuple (4.3)
