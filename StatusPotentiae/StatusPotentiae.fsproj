@@ -63,6 +63,8 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Prelude.fs" />
     <Compile Include="Infrastructure.fs" />
+    <Compile Include="PowerManagement.fs" />
+    <Compile Include="TrayApplicationContext.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="paket.references" />
@@ -72,7 +74,9 @@
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
