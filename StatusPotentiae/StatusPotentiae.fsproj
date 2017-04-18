@@ -61,9 +61,12 @@
       <Paket>True</Paket>
     </Content>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Prelude.fs" />
+    <Compile Include="Infrastructure.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="paket.references" />
+    <None Include="Script1.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
