@@ -108,6 +108,8 @@ module ApplicationContext =
             addMenuItems ()
             updateBatteryState ()
 
+            PowerManagement.registerPowerModeChangedHandler updateBatteryState
+
         override __.Dispose disposing =
             if disposing && not <| isNull components
             then components.Dispose()

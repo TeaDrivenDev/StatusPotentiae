@@ -1,6 +1,6 @@
 ﻿namespace TeaDriven.StatusPotentiae
 
-//[<RequireQualifiedAccess>]
+[<RequireQualifiedAccess>]
 module PowerManagement =
     open System
     open System.Diagnostics
@@ -94,13 +94,14 @@ module PowerManagement =
         getPlans ()
         |> List.tryFind (fun plan -> plan.Guid = activeGuid)
         |> Option.defaultValue { Name = "Unknown plan"; Guid = activeGuid }
-
-    SystemEvents.PowerModeChanged.AddHandler(fun _ _ ->
-        match SystemInformation.PowerStatus.PowerLineStatus with
-        | PowerLineStatus.Online ->
-            setActive ignore maximumPerformancePlan
-            Logger.info "Power connected"
-        | PowerLineStatus.Offline ->
-            setActive ignore powerSourceOptimizedPlan
-            Logger.info "Power disconnected"
-        | _ -> Logger.warn "Power state changed to an unknown value")
+    
+    let registerPowerModeChangedHandler uiCallback =
+        SystemEvents.PowerModeChanged.AddHandler(fun _ _ ->
+            match SystemInformation.PowerStatus.PowerLineStatus with
+            | PowerLineStatus.Online ->
+                setActive uiCallback maximumPerformancePlan
+                Logger.info "Power connected"
+            | PowerLineStatus.Offline ->
+                setActive uiCallback powerSourceOptimizedPlan
+                Logger.info "Power disconnected"
+            | _ -> Logger.warn "Power state changed to an unknown value")
