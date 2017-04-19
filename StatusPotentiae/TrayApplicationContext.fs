@@ -11,14 +11,17 @@ module ApplicationContext =
         let components = new System.ComponentModel.Container()
 
         let onContextMenuStripOpening (sender : obj) (e : CancelEventArgs) =
-            let icon = sender :?> NotifyIcon
+            let contextMenuStrip = sender :?> ContextMenuStrip
 
             let activePlan = PowerManagement.getActivePlan ()
 
-            for item in icon.ContextMenuStrip.Items do
+            for item in contextMenuStrip.Items do
                 match item with
                 | :? ToolStripMenuItem as item ->
-                    item.Checked <- item.Tag :?> PowerManagement.PowerPlan = activePlan
+                    item.Checked <-
+                        match item.Tag with
+                        | null -> false
+                        | tag -> tag :?> PowerManagement.PowerPlan = activePlan
                 | _ -> ()
 
         let onNotifyIconMouseUp (sender : obj) (e : MouseEventArgs) =
@@ -43,12 +46,30 @@ module ApplicationContext =
 
             icon
 
+        let (|AtLeast|_|) atLeast inputValue =
+            if inputValue >= atLeast then Some () else None
+
         let updateBatteryDisplay planName isCharging percentValue =
-            ()
+            let icon =
+                match percentValue, isCharging with
+                | AtLeast 86, true -> Resources.Icons.batt_ch_4
+                | AtLeast 86, false -> Resources.Icons.batt_4
+                | AtLeast 62, true -> Resources.Icons.batt_ch_3
+                | AtLeast 62, false -> Resources.Icons.batt_3
+                | AtLeast 38, true -> Resources.Icons.batt_ch_2
+                | AtLeast 38, false -> Resources.Icons.batt_2
+                | AtLeast 14, true -> Resources.Icons.batt_ch_1
+                | AtLeast 14, false -> Resources.Icons.batt_1
+                | _, true -> Resources.Icons.batt_ch_0
+                | _, false -> Resources.Icons.batt_0
+                |> Resources.getIcon
+
+            notifyIcon.Icon <- icon
+            notifyIcon.Text <- sprintf "%s (%i%%)" planName percentValue
 
         let updateBatteryState () =
             updateBatteryDisplay
-                (PowerManagement.getActivePlan ())
+                (PowerManagement.getActivePlan ()).Name
                 (PowerManagement.isCharging ())
                 (PowerManagement.getChargeValue ())
 

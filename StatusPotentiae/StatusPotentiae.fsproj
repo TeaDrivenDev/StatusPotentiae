@@ -53,31 +53,6 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
-  <ItemGroup>
-    <Content Include="any\netstandard1.6\FSharp.Core.optdata">
-      <Paket>True</Paket>
-    </Content>
-    <Content Include="any\netstandard1.6\FSharp.Core.sigdata">
-      <Paket>True</Paket>
-    </Content>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Prelude.fs" />
-    <Compile Include="Infrastructure.fs" />
-    <Compile Include="PowerManagement.fs" />
-    <Compile Include="TrayApplicationContext.fs" />
-    <Compile Include="Program.fs" />
-    <None Include="App.config" />
-    <Content Include="paket.references" />
-    <None Include="Script1.fsx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -107,4 +82,41 @@
       </ItemGroup>
     </When>
   </Choose>
+  <ItemGroup>
+    <Content Include="any\netstandard1.6\FSharp.Core.optdata">
+      <Paket>True</Paket>
+    </Content>
+    <Content Include="any\netstandard1.6\FSharp.Core.sigdata">
+      <Paket>True</Paket>
+    </Content>
+    <Content Include="res\batt-0.ico" />
+    <Content Include="res\batt-1.ico" />
+    <Content Include="res\batt-2.ico" />
+    <Content Include="res\batt-3.ico" />
+    <Content Include="res\batt-4.ico" />
+    <Content Include="res\batt-ch-0.ico" />
+    <Content Include="res\batt-ch-1.ico" />
+    <Content Include="res\batt-ch-2.ico" />
+    <Content Include="res\batt-ch-3.ico" />
+    <Content Include="res\batt-ch-4.ico" />
+    <Compile Include="Resources.fs" />
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Prelude.fs" />
+    <Compile Include="Infrastructure.fs" />
+    <Compile Include="PowerManagement.fs" />
+    <Compile Include="TrayApplicationContext.fs" />
+    <Compile Include="Program.fs" />
+    <None Include="App.config" />
+    <Content Include="paket.references" />
+    <None Include="Script1.fsx" />
+    <EmbeddedResource Include="Resources.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
 </Project>
