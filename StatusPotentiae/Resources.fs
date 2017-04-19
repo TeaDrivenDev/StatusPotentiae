@@ -5,7 +5,8 @@ module Resources =
     open System.Globalization
     open System.Resources
 
-    let private resources = ResourceManager("Resources", System.Reflection.Assembly.GetExecutingAssembly())
+    let private resources =
+        ResourceManager("Resources", System.Reflection.Assembly.GetExecutingAssembly())
 
     [<RequireQualifiedAccess>]
     module Icons =
