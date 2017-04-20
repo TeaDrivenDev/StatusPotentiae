@@ -50,7 +50,7 @@ module Autostart =
     open System.Runtime.InteropServices
     open TeaDriven.Prelude
 
-    let createShortcut executablePath shortcutPath =
+    let private createShortcut executablePath shortcutPath =
         let shellType = Guid "72C24DD5-D70A-438B-8A42-98424B88AFB8" |> Type.GetTypeFromCLSID
         let shell = Activator.CreateInstance shellType
 
@@ -60,21 +60,16 @@ module Autostart =
     
             try
                 shellType.InvokeMember("TargetPath", BindingFlags.SetProperty, null, link, [| executablePath |]) |> ignore
-                shellType.InvokeMember("IconLocation", BindingFlags.SetProperty, null, link, [| "shell32.dll, 23" |]) |> ignore
+                shellType.InvokeMember("IconLocation", BindingFlags.SetProperty, null, link, [| sprintf "%s, 0" executablePath |]) |> ignore
                 shellType.InvokeMember("Save", BindingFlags.InvokeMethod, null, link, null) |> ignore
             finally
                 Marshal.FinalReleaseComObject link |> ignore
         finally
             Marshal.FinalReleaseComObject shell |> ignore
 
-    let createAutostartShortcut () =
+    let createAutostartShortcut title =
         let executablePath = Assembly.GetExecutingAssembly().Location
-
-        let shortcutName =
-            executablePath
-            |> Path.GetFileName
-            |> asFst "lnk"
-            |> Path.ChangeExtension 
+        let shortcutName = sprintf "%s.lnk" title
 
         let shortcutPath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), shortcutName)

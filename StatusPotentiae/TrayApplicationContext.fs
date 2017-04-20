@@ -100,6 +100,10 @@ module ApplicationContext =
             item.Click.AddHandler(fun _ _ -> PowerManagement.openPowerOptions ())
             notifyIcon.ContextMenuStrip.Items.Add item |> ignore
 
+            let item = new ToolStripMenuItem("Install Autostart Shortcut")
+            item.Click.AddHandler(fun _ _ -> Autostart.createAutostartShortcut "Status Potentiae")
+            notifyIcon.ContextMenuStrip.Items.Add item |> ignore
+
             let item = new ToolStripMenuItem("Exit")
             item.Click.AddHandler(fun _ _ -> this.ExitThread())
             notifyIcon.ContextMenuStrip.Items.Add item |> ignore

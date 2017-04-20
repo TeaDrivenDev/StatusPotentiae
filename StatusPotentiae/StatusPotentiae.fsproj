@@ -13,6 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <Name>StatusPotentiae</Name>
+    <Win32Resource>resources.res</Win32Resource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -110,6 +111,7 @@
     <Content Include="paket.references" />
     <None Include="Script1.fsx" />
     <EmbeddedResource Include="Resources.resx" />
+    <None Include="resources.rc" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -119,4 +121,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>"C:\Program Files (x86)\Windows Kits\10\bin\x64\rc.exe" $(ProjectDir)resources.rc</PreBuildEvent>
+  </PropertyGroup>
 </Project>
