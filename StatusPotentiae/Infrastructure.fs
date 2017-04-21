@@ -48,7 +48,6 @@ module Autostart =
     open System.IO
     open System.Reflection
     open System.Runtime.InteropServices
-    open TeaDriven.Prelude
 
     let private createShortcut executablePath shortcutPath =
         let shellType = Guid "72C24DD5-D70A-438B-8A42-98424B88AFB8" |> Type.GetTypeFromCLSID

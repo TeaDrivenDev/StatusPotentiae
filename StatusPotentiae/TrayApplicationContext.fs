@@ -8,7 +8,7 @@ module ApplicationContext =
     type TrayApplicationContext() as this =
         inherit ApplicationContext()
 
-        let components = new System.ComponentModel.Container()
+        let components = new Container()
 
         let onContextMenuStripOpening (sender : obj) (e : CancelEventArgs) =
             let contextMenuStrip = sender :?> ContextMenuStrip
@@ -31,7 +31,6 @@ module ApplicationContext =
             then
                 let mi = typeof<NotifyIcon>.GetMethod("ShowContextMenu", BindingFlags.Instance ||| BindingFlags.NonPublic)
                 mi.Invoke(notifyIcon, null) |> ignore
-
 
         let notifyIcon =
             let icon =
@@ -85,28 +84,44 @@ module ApplicationContext =
         let addMenuItems() =
             let currentPlan = PowerManagement.getActivePlan ()
 
+            let menuItems = notifyIcon.ContextMenuStrip.Items
+
             plans
             |> List.iter (fun plan ->
                 let item = new ToolStripMenuItem(plan.Name)
                 item.Tag <- plan
                 item.Click.AddHandler(fun _ _ ->
                     PowerManagement.setActive updateBatteryState plan)
-
                 item.Checked <- (plan = currentPlan)
 
-                notifyIcon.ContextMenuStrip.Items.Add item |> ignore)
+                item |> menuItems.Add |> ignore)
+
+            new ToolStripSeparator() |> menuItems.Add |> ignore
+
+            let menu = new ToolStripMenuItem("Disconnected Power Plan")
+            plans
+            |> List.iter (fun plan ->
+                let item = new ToolStripMenuItem(plan.Name)
+                item.Tag <- plan
+                //item.Click
+                //item.Checked
+
+                item |> menu.DropDownItems.Add |> ignore)
+            menu |> menuItems.Add |> ignore
+
+            new ToolStripSeparator() |> notifyIcon.ContextMenuStrip.Items.Add |> ignore
 
             let item = new ToolStripMenuItem("Open Power Options")
             item.Click.AddHandler(fun _ _ -> PowerManagement.openPowerOptions ())
-            notifyIcon.ContextMenuStrip.Items.Add item |> ignore
+            item |> menuItems.Add |> ignore
 
             let item = new ToolStripMenuItem("Install Autostart Shortcut")
             item.Click.AddHandler(fun _ _ -> Autostart.createAutostartShortcut "Status Potentiae")
-            notifyIcon.ContextMenuStrip.Items.Add item |> ignore
+            item |> menuItems.Add |> ignore
 
             let item = new ToolStripMenuItem("Exit")
             item.Click.AddHandler(fun _ _ -> this.ExitThread())
-            notifyIcon.ContextMenuStrip.Items.Add item |> ignore
+            item |> menuItems.Add |> ignore
 
         do
             addMenuItems ()
