@@ -99,7 +99,12 @@ module PowerManagement =
         SystemEvents.PowerModeChanged.AddHandler(fun _ _ ->
             match SystemInformation.PowerStatus.PowerLineStatus with
             | PowerLineStatus.Online ->
-                setActive uiCallback maximumPerformancePlan
+                Settings.getConnectedPowerPlan ()
+                |> Option.map (fun guid ->
+                    getPlans()
+                    |> List.find (fun plan -> plan.Guid = guid))
+                |> Option.defaultValue maximumPerformancePlan
+                |> setActive uiCallback
 
                 Logger.info "Power connected"
             | PowerLineStatus.Offline ->

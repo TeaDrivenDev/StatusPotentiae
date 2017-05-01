@@ -82,6 +82,28 @@ module ApplicationContext =
         let plans = PowerManagement.getPlans ()
     
         let addMenuItems() =
+            let createDefaultPlanMenu
+                (displayName : string)
+                getDefault
+                setDefault
+                (plans : PowerManagement.PowerPlan list) =
+                let menu = new ToolStripMenuItem(displayName)
+                
+                plans
+                |> List.iter (fun plan ->
+                    let item = new ToolStripMenuItem(plan.Name)
+                    item.Tag <- plan
+                    item.Click.AddHandler (fun _ _ ->
+                        setDefault plan.Guid)
+                    item.Checked <-
+                        getDefault ()
+                        |> Option.map ((=) plan.Guid)
+                        |> Option.defaultValue false
+
+                    item |> menu.DropDownItems.Add |> ignore)
+                
+                menu
+    
             let currentPlan = PowerManagement.getActivePlan ()
 
             let menuItems = notifyIcon.ContextMenuStrip.Items
@@ -98,20 +120,21 @@ module ApplicationContext =
 
             new ToolStripSeparator() |> menuItems.Add |> ignore
 
-            let menu = new ToolStripMenuItem("Disconnected Power Plan")
             plans
-            |> List.iter (fun plan ->
-                let item = new ToolStripMenuItem(plan.Name)
-                item.Tag <- plan
-                item.Click.AddHandler (fun _ _ ->
-                    Settings.setDisconnectedPowerPlan plan.Guid)
-                item.Checked <-
-                    Settings.getDisconnectedPowerPlan()
-                    |> Option.map ((=) plan.Guid)
-                    |> Option.defaultValue false
+            |> createDefaultPlanMenu
+                "Connected Power Plan"
+                Settings.getConnectedPowerPlan
+                Settings.setConnectedPowerPlan
+            |> menuItems.Add
+            |> ignore
 
-                item |> menu.DropDownItems.Add |> ignore)
-            menu |> menuItems.Add |> ignore
+            plans
+            |> createDefaultPlanMenu
+                "Disconnected Power Plan"
+                Settings.getDisconnectedPowerPlan
+                Settings.setDisconnectedPowerPlan
+            |> menuItems.Add
+            |> ignore
 
             new ToolStripSeparator() |> notifyIcon.ContextMenuStrip.Items.Add |> ignore
 

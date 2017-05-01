@@ -94,6 +94,9 @@ module Settings =
     open Fake
 
     [<Literal>]
+    let ConnectedPowerPlan = "ConnectedPowerPlan"
+
+    [<Literal>]
     let DisconnectedPowerPlan = "DisconnectedPowerPlan"
 
     let private applicationSubKey =
@@ -104,13 +107,25 @@ module Settings =
         ]
         |> String.concat @"\"
 
-    let ensureApplicationSubKey () =
+    let private ensureApplicationSubKey () =
         createRegistrySubKey HKEYCurrentUser applicationSubKey
 
     let private tryGetRegistryValue baseKey (subKey : string) name =
         if valueExistsForKey baseKey subKey name
         then getRegistryValue baseKey subKey name |> Some
         else None
+
+    let getConnectedPowerPlan () =
+        ensureApplicationSubKey ()
+
+        tryGetRegistryValue HKEYCurrentUser applicationSubKey ConnectedPowerPlan
+        |> Option.map Guid
+
+    let setConnectedPowerPlan (guid : Guid) =
+        ensureApplicationSubKey ()
+
+        guid.ToString "B"
+        |> setRegistryValue HKEYCurrentUser applicationSubKey ConnectedPowerPlan
 
     let getDisconnectedPowerPlan () =
         ensureApplicationSubKey ()
