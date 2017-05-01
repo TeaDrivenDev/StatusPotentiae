@@ -1,5 +1,14 @@
 ﻿namespace TeaDriven.StatusPotentiae
 
+[<RequireQualifiedAccess>]
+module Global =
+    [<Literal>]
+    let TeaDrivenBaseKey = "TeaDriven"
+
+    [<Literal>]
+    let ApplicationName = "StatusPotentiae"
+
+[<RequireQualifiedAccess>]
 module Logger =
     open System.Diagnostics
     open System.Security
@@ -24,6 +33,7 @@ module Logger =
     let warn message = writeEntry EventLogEntryType.Warning message
     let error message = writeEntry EventLogEntryType.Error message
 
+[<RequireQualifiedAccess>]
 module SingleInstance =
     open System.Threading
     open System.Reflection
@@ -43,6 +53,7 @@ module SingleInstance =
 
     let stop () = mutex.ReleaseMutex()
 
+[<RequireQualifiedAccess>]
 module Autostart =
     open System
     open System.IO
@@ -75,4 +86,41 @@ module Autostart =
 
         if not <| File.Exists shortcutPath
         then createShortcut executablePath shortcutPath
-        
+
+[<RequireQualifiedAccess>]
+module Settings =
+    open System
+
+    open Fake
+
+    [<Literal>]
+    let DisconnectedPowerPlan = "DisconnectedPowerPlan"
+
+    let private applicationSubKey =
+        [
+            "Software"
+            Global.TeaDrivenBaseKey
+            Global.ApplicationName
+        ]
+        |> String.concat @"\"
+
+    let ensureApplicationSubKey () =
+        createRegistrySubKey HKEYCurrentUser applicationSubKey
+
+    let private tryGetRegistryValue baseKey (subKey : string) name =
+        if valueExistsForKey baseKey subKey name
+        then getRegistryValue baseKey subKey name |> Some
+        else None
+
+    let getDisconnectedPowerPlan () =
+        ensureApplicationSubKey ()
+
+        tryGetRegistryValue HKEYCurrentUser applicationSubKey DisconnectedPowerPlan
+        |> Option.map Guid
+
+    let setDisconnectedPowerPlan (guid : Guid) =
+        ensureApplicationSubKey ()
+
+        guid.ToString "B"
+        |> setRegistryValue HKEYCurrentUser applicationSubKey DisconnectedPowerPlan
+

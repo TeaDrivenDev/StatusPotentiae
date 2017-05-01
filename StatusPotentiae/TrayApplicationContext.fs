@@ -103,8 +103,12 @@ module ApplicationContext =
             |> List.iter (fun plan ->
                 let item = new ToolStripMenuItem(plan.Name)
                 item.Tag <- plan
-                //item.Click
-                //item.Checked
+                item.Click.AddHandler (fun _ _ ->
+                    Settings.setDisconnectedPowerPlan plan.Guid)
+                item.Checked <-
+                    Settings.getDisconnectedPowerPlan()
+                    |> Option.map ((=) plan.Guid)
+                    |> Option.defaultValue false
 
                 item |> menu.DropDownItems.Add |> ignore)
             menu |> menuItems.Add |> ignore

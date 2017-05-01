@@ -5,3 +5,4 @@ framework: net452
 
 nuget System.ValueTuple 4.3.0
 nuget FSharp.Core
+nuget Fake.Lib

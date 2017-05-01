@@ -100,8 +100,15 @@ module PowerManagement =
             match SystemInformation.PowerStatus.PowerLineStatus with
             | PowerLineStatus.Online ->
                 setActive uiCallback maximumPerformancePlan
+
                 Logger.info "Power connected"
             | PowerLineStatus.Offline ->
-                setActive uiCallback powerSourceOptimizedPlan
+                Settings.getDisconnectedPowerPlan ()
+                |> Option.map (fun guid ->
+                    getPlans()
+                    |> List.find (fun plan -> plan.Guid = guid))
+                |> Option.defaultValue powerSourceOptimizedPlan
+                |> setActive uiCallback
+
                 Logger.info "Power disconnected"
             | _ -> Logger.warn "Power state changed to an unknown value")
