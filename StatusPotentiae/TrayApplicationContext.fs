@@ -10,19 +10,20 @@ module ApplicationContext =
 
         let components = new Container()
 
-        let onContextMenuStripOpening (sender : obj) (e : CancelEventArgs) =
-            let contextMenuStrip = sender :?> ContextMenuStrip
+        let createContextMenuStripOpeningHandler getCurrentValue =
+            fun (sender : obj) e ->
+                let contextMenuStrip = sender :?> ContextMenuStrip
 
-            let activePlanId = (PowerManagement.getActivePlan ()).Guid
+                let activePlanId = getCurrentValue()
 
-            for item in contextMenuStrip.Items do
-                match item with
-                | :? ToolStripMenuItem as item ->
-                    item.Checked <-
-                        match item.Tag with
-                        | :? PowerManagement.PowerPlan as plan -> plan.Guid = activePlanId
-                        | _ -> false
-                | _ -> ()
+                for item in contextMenuStrip.Items do
+                    match item with
+                    | :? ToolStripMenuItem as item ->
+                        item.Checked <-
+                            match item.Tag with
+                            | :? PowerManagement.PowerPlan as plan -> plan.Guid = activePlanId
+                            | _ -> false
+                    | _ -> ()
 
         let onNotifyIconMouseUp (sender : obj) (e : MouseEventArgs) =
             let notifyIcon = sender :?> NotifyIcon
@@ -39,8 +40,10 @@ module ApplicationContext =
                                Icon = null,
                                Text = "Status Potentiae",
                                Visible = true)
-                
-            icon.ContextMenuStrip.Opening.AddHandler(CancelEventHandler onContextMenuStripOpening)
+            
+            CancelEventHandler (createContextMenuStripOpeningHandler (fun () -> (PowerManagement.getActivePlan ()).Guid))
+            |> icon.ContextMenuStrip.Opening.AddHandler
+
             icon.MouseUp.AddHandler(MouseEventHandler onNotifyIconMouseUp)
 
             icon
