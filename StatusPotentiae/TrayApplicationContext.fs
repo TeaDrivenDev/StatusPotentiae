@@ -13,15 +13,15 @@ module ApplicationContext =
         let onContextMenuStripOpening (sender : obj) (e : CancelEventArgs) =
             let contextMenuStrip = sender :?> ContextMenuStrip
 
-            let activePlan = PowerManagement.getActivePlan ()
+            let activePlanId = (PowerManagement.getActivePlan ()).Guid
 
             for item in contextMenuStrip.Items do
                 match item with
                 | :? ToolStripMenuItem as item ->
                     item.Checked <-
                         match item.Tag with
-                        | null -> false
-                        | tag -> tag :?> PowerManagement.PowerPlan = activePlan
+                        | :? PowerManagement.PowerPlan as plan -> plan.Guid = activePlanId
+                        | _ -> false
                 | _ -> ()
 
         let onNotifyIconMouseUp (sender : obj) (e : MouseEventArgs) =
