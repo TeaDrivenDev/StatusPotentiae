@@ -12,16 +12,16 @@ module ApplicationContext =
 
         let createContextMenuStripOpeningHandler getCurrentValue =
             fun (sender : obj) e ->
-                let contextMenuStrip = sender :?> ContextMenuStrip
+                let contextMenuStrip = sender :?> ToolStripDropDownMenu
 
-                let activePlanId = getCurrentValue()
+                let currentValue = getCurrentValue()
 
                 for item in contextMenuStrip.Items do
                     match item with
                     | :? ToolStripMenuItem as item ->
                         item.Checked <-
                             match item.Tag with
-                            | :? PowerManagement.PowerPlan as plan -> plan.Guid = activePlanId
+                            | :? PowerManagement.PowerPlan as plan -> plan.Guid = currentValue
                             | _ -> false
                     | _ -> ()
 
@@ -104,6 +104,9 @@ module ApplicationContext =
                         |> Option.defaultValue false
 
                     item |> menu.DropDownItems.Add |> ignore)
+
+                CancelEventHandler(createContextMenuStripOpeningHandler (fun () -> getDefault() |> Option.defaultValue System.Guid.Empty))
+                |> menu.DropDown.Opening.AddHandler
                 
                 menu
     
