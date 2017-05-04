@@ -94,26 +94,29 @@ module PowerManagement =
         getPlans ()
         |> List.tryFind (fun plan -> plan.Guid = activeGuid)
         |> Option.defaultValue { Name = "Unknown plan"; Guid = activeGuid }
-    
+
+    let setPlanForPowerLineStatus uiCallback =
+        match SystemInformation.PowerStatus.PowerLineStatus with
+        | PowerLineStatus.Online ->
+            Settings.getConnectedPowerPlan ()
+            |> Option.map (fun guid ->
+                getPlans()
+                |> List.find (fun plan -> plan.Guid = guid))
+            |> Option.defaultValue maximumPerformancePlan
+            |> setActive uiCallback
+
+            Logger.info "Power connected"
+        | PowerLineStatus.Offline ->
+            Settings.getDisconnectedPowerPlan ()
+            |> Option.map (fun guid ->
+                getPlans()
+                |> List.find (fun plan -> plan.Guid = guid))
+            |> Option.defaultValue powerSourceOptimizedPlan
+            |> setActive uiCallback
+
+            Logger.info "Power disconnected"
+        | _ -> Logger.warn "Power state changed to an unknown value"
+
     let registerPowerModeChangedHandler uiCallback =
         SystemEvents.PowerModeChanged.AddHandler(fun _ _ ->
-            match SystemInformation.PowerStatus.PowerLineStatus with
-            | PowerLineStatus.Online ->
-                Settings.getConnectedPowerPlan ()
-                |> Option.map (fun guid ->
-                    getPlans()
-                    |> List.find (fun plan -> plan.Guid = guid))
-                |> Option.defaultValue maximumPerformancePlan
-                |> setActive uiCallback
-
-                Logger.info "Power connected"
-            | PowerLineStatus.Offline ->
-                Settings.getDisconnectedPowerPlan ()
-                |> Option.map (fun guid ->
-                    getPlans()
-                    |> List.find (fun plan -> plan.Guid = guid))
-                |> Option.defaultValue powerSourceOptimizedPlan
-                |> setActive uiCallback
-
-                Logger.info "Power disconnected"
-            | _ -> Logger.warn "Power state changed to an unknown value")
+            setPlanForPowerLineStatus uiCallback)

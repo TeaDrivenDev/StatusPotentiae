@@ -162,6 +162,8 @@ module ApplicationContext =
 
             PowerManagement.registerPowerModeChangedHandler updateBatteryState
 
+            PowerManagement.setPlanForPowerLineStatus updateBatteryState
+
         override __.Dispose disposing =
             if disposing && not <| isNull components
             then components.Dispose()
