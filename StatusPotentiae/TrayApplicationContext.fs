@@ -48,6 +48,10 @@ module ApplicationContext =
 
             icon
 
+        let showNotification message =
+            notifyIcon.BalloonTipText <- message
+            notifyIcon.ShowBalloonTip 10000
+
         let (|AtLeast|_|) atLeast inputValue =
             if inputValue >= atLeast then Some () else None
 
@@ -119,7 +123,7 @@ module ApplicationContext =
                 let item = new ToolStripMenuItem(plan.Name)
                 item.Tag <- plan
                 item.Click.AddHandler(fun _ _ ->
-                    PowerManagement.setActive updateBatteryState plan)
+                    PowerManagement.setActive showNotification updateBatteryState None plan)
                 item.Checked <- (plan = currentPlan)
 
                 item |> menuItems.Add |> ignore)
@@ -160,9 +164,9 @@ module ApplicationContext =
             addMenuItems ()
             updateBatteryState ()
 
-            PowerManagement.registerPowerModeChangedHandler updateBatteryState
+            PowerManagement.registerPowerModeChangedHandler showNotification updateBatteryState
 
-            PowerManagement.setPlanForPowerLineStatus updateBatteryState
+            PowerManagement.setPlanForPowerLineStatus showNotification updateBatteryState
 
         override __.Dispose disposing =
             if disposing && not <| isNull components

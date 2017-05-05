@@ -79,11 +79,21 @@ module PowerManagement =
 
     let getPlans () = [ maximumPerformancePlan; balancedPlan; powerSourceOptimizedPlan ]
 
-    let setActive uiCallback plan =
+    let setActive showNotification uiCallback stateMessage plan =
         let mutable guid = plan.Guid
 
         Imports.PowerSetActiveScheme(IntPtr.Zero, &guid) |> ignore
         uiCallback()
+
+        [
+            match stateMessage with
+            | Some m -> yield m
+            | None -> ()
+
+            yield sprintf "%s plan activated" plan.Name
+        ]
+        |> String.concat ", "
+        |> showNotification
 
         sprintf "Switched to %s" plan.Name
         |> Logger.info
@@ -95,28 +105,32 @@ module PowerManagement =
         |> List.tryFind (fun plan -> plan.Guid = activeGuid)
         |> Option.defaultValue { Name = "Unknown plan"; Guid = activeGuid }
 
-    let setPlanForPowerLineStatus uiCallback =
+    let setPlanForPowerLineStatus showNotification uiCallback =
         match SystemInformation.PowerStatus.PowerLineStatus with
         | PowerLineStatus.Online ->
+            let message = "Power connected"
+
             Settings.getConnectedPowerPlan ()
             |> Option.map (fun guid ->
                 getPlans()
                 |> List.find (fun plan -> plan.Guid = guid))
             |> Option.defaultValue maximumPerformancePlan
-            |> setActive uiCallback
+            |> setActive showNotification uiCallback (Some message)
 
-            Logger.info "Power connected"
+            Logger.info message
         | PowerLineStatus.Offline ->
+            let message = "Power disconnected"
+
             Settings.getDisconnectedPowerPlan ()
             |> Option.map (fun guid ->
                 getPlans()
                 |> List.find (fun plan -> plan.Guid = guid))
             |> Option.defaultValue powerSourceOptimizedPlan
-            |> setActive uiCallback
+            |> setActive showNotification uiCallback (Some message)
 
-            Logger.info "Power disconnected"
+            Logger.info message
         | _ -> Logger.warn "Power state changed to an unknown value"
 
-    let registerPowerModeChangedHandler uiCallback =
+    let registerPowerModeChangedHandler showNotification uiCallback =
         SystemEvents.PowerModeChanged.AddHandler(fun _ _ ->
-            setPlanForPowerLineStatus uiCallback)
+            setPlanForPowerLineStatus showNotification uiCallback)
