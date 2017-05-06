@@ -6,3 +6,8 @@ framework: net452
 nuget System.ValueTuple 4.3.0
 nuget FSharp.Core
 nuget Fake.Lib
+
+group Build
+source https://www.nuget.org/api/v2
+
+nuget FAKE

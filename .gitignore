@@ -187,3 +187,5 @@ docs/content/release-notes.md
 .fake/
 
 keys.txt
+
+*.res
