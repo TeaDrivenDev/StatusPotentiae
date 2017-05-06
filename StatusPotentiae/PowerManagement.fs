@@ -80,23 +80,28 @@ module PowerManagement =
     let getPlans () = [ maximumPerformancePlan; balancedPlan; powerSourceOptimizedPlan ]
 
     let setActive showNotification uiCallback stateMessage plan =
-        let mutable guid = plan.Guid
+        if getActiveGuid() <> plan.Guid
+        then
+            let mutable guid = plan.Guid
 
-        Imports.PowerSetActiveScheme(IntPtr.Zero, &guid) |> ignore
-        uiCallback()
+            Imports.PowerSetActiveScheme(IntPtr.Zero, &guid) |> ignore
+            uiCallback()
 
-        [
-            match stateMessage with
-            | Some m -> yield m
-            | None -> ()
+            [
+                match stateMessage with
+                | Some m -> yield m
+                | None -> ()
 
-            yield sprintf "%s plan activated" plan.Name
-        ]
-        |> String.concat ", "
-        |> showNotification
+                yield sprintf "%s plan activated" plan.Name
+            ]
+            |> String.concat ", "
+            |> showNotification
 
-        sprintf "Switched to %s" plan.Name
-        |> Logger.info
+            sprintf "Switched to %s" plan.Name
+            |> Logger.info
+        else
+            sprintf "%s plan already active" plan.Name
+            |> Logger.info
 
     let getActivePlan () =
         let activeGuid = getActiveGuid ()
