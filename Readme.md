@@ -17,7 +17,6 @@ The original application always switched to "High performance" when AC power was
 # Limitations
 
 - Only the predefined power plans "High performance", "Balanced" and "Power saver" are currently supported. Behavior with custom defined power plans is currently untested and undefined.
-- AC connection changes while in STR/STD are currently not detected; i.e. putting the computer to sleep on AC power and waking it up on battery will not trigger the correct power plan change.
 
 # Technical information
 
