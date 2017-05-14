@@ -89,6 +89,9 @@ module ApplicationContext =
         let plans = PowerManagement.getPlans ()
     
         let addMenuItems() =
+            let addSeparator (menu : ToolStripItemCollection) =
+                new ToolStripSeparator() |> menu.Add |> ignore
+
             let createDefaultPlanMenu
                 (displayName : string)
                 getDefault
@@ -128,7 +131,7 @@ module ApplicationContext =
 
                 item |> menuItems.Add |> ignore)
 
-            new ToolStripSeparator() |> menuItems.Add |> ignore
+            addSeparator menuItems
 
             plans
             |> createDefaultPlanMenu
@@ -146,7 +149,7 @@ module ApplicationContext =
             |> menuItems.Add
             |> ignore
 
-            new ToolStripSeparator() |> notifyIcon.ContextMenuStrip.Items.Add |> ignore
+            addSeparator menuItems
 
             let item = new ToolStripMenuItem("Open Power Options")
             item.Click.AddHandler(fun _ _ -> PowerManagement.openPowerOptions ())
@@ -158,6 +161,20 @@ module ApplicationContext =
 
             let item = new ToolStripMenuItem("Exit")
             item.Click.AddHandler(fun _ _ -> this.ExitThread())
+            item |> menuItems.Add |> ignore
+
+            addSeparator menuItems
+
+            let item =
+                let versionString =
+                    let version = Assembly.GetExecutingAssembly().GetName().Version
+
+                    sprintf "%i.%i.%i" version.Major version.Minor version.Build
+
+                new ToolStripMenuItem(sprintf "Version %s" versionString)
+            item.Click.AddHandler(fun _ _ ->
+                System.Diagnostics.Process.Start @"https://github.com/TeaDrivenDev/StatusPotentiae/releases"
+                |> ignore)
             item |> menuItems.Add |> ignore
 
         do
