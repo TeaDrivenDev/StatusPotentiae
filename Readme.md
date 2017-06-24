@@ -22,6 +22,10 @@ The original application always switched to "High performance" when AC power was
 
 **Status Potentiae** is a .NET application written in F#. The minimum required .NET version is 4.5.2 (the currently oldest .NET 4.x version still in active support by Microsoft). The application has only been tested on Windows 10 but can reasonably be expected to work from Windows 7 upwards.
 
+## Using the application
+
+If you just want to use Status Potentiae, you can download the zip file for the latest version from the **Releases** section.
+
 ## Building
 
-Clone the repository, run `build.cmd`. You may get an error about `C:\Program Files (x86)\Windows Kits\10\bin\x64\rc.exe` being missing (even on Windows 10); in that case change the respective line in the pre-build event of the project to say `C:\Program Files (x86)\Windows Kits\8.1\bin\x64\rc.exe" $(ProjectDir)resources.rc`.
+Clone the repository, run `build.cmd`. You may get an error about `C:\Program Files (x86)\Windows Kits\10\bin\x64\rc.exe` being missing (even on Windows 10); in that case try changing the respective line in the pre-build event of the project to say `C:\Program Files (x86)\Windows Kits\8.1\bin\x64\rc.exe" $(ProjectDir)resources.rc`.
