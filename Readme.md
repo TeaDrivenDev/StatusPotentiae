@@ -24,7 +24,7 @@ The original application always switched to "High performance" when AC power was
 
 ## Using the application
 
-If you just want to use Status Potentiae, you can download the zip file for the latest version from the **Releases** section.
+If you just want to use Status Potentiae, you can download the zip file for the latest version from the [**Releases**](https://github.com/TeaDrivenDev/StatusPotentiae/releases) section.
 
 ## Building
 
