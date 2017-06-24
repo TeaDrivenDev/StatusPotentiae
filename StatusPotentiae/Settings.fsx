@@ -56,3 +56,7 @@ let private tryGetRegistryValue baseKey (subKey : string) name =
 tryGetRegistryValue HKEYCurrentUser @"Software\TeaDriven\StatusPotentiae" "Guid"
 
 createRegistrySubKey HKEYCurrentUser @"Software\TeaDriven\StatusPotentiae"
+
+
+let v = System.Version(4, 3, 2, 1)
+v.MinorRevision
