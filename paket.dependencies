@@ -1,13 +1,12 @@
-source https://dotnet.myget.org/F/dotnet-core/api/v3/index.json
-source https://dotnet.myget.org/F/cli-deps/api/v3/index.json
 source https://api.nuget.org/v3/index.json
 framework: net452
 
-nuget System.ValueTuple 4.3.0
 nuget FSharp.Core
 nuget Fake.Lib
 
 group Build
-source https://www.nuget.org/api/v2
+    content: nuget
+    source https://api.nuget.org/v3/index.json
 
-nuget FAKE
+    nuget FAKE
+    github fsharp/FAKE modules/Octokit/Octokit.fsx
